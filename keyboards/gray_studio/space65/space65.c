@@ -15,6 +15,11 @@
  */
 #include "space65.h"
 
+
+void copyrgb(LED_TYPE *src, LED_TYPE *dst);
+
+LED_TYPE led[RGBLED_NUM];
+
 void matrix_init_kb(void) {
 	// put your keyboard start-up code here
 	// runs once when the firmware starts up
@@ -41,9 +46,17 @@ void led_set_kb(uint8_t usb_led) {
 	// put your keyboard LED indicator (ex: Caps Lock LED) toggling code here
   if (IS_LED_ON(usb_led, USB_LED_CAPS_LOCK)) {
     writePinLow(E6);
+    sethsv(HSV_RED, (LED_TYPE *) &led[0]);
+    sethsv(HSV_RED, (LED_TYPE *) &led[1]);
+    sethsv(HSV_RED, (LED_TYPE *) &led[2]);
+    rgblight_set();
   } else {
-    writePinHigh(E6);
+    writePinHigh(E6);````
+    sethsv(HSV_ORANGE, (LED_TYPE *) &led[0]);
+    sethsv(HSV_ORANGE, (LED_TYPE *) &led[1]);
+    sethsv(HSV_ORANGE, (LED_TYPE *) &led[2]);
+    rgblight_set();
   }
 
-	led_set_user(usb_led);
+    led_set_user(usb_led);
 }
