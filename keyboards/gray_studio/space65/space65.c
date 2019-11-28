@@ -15,8 +15,6 @@
  */
 #include "space65.h"
 
-void copyrgb(LED_TYPE *src, LED_TYPE *dst);
-
 LED_TYPE led[RGBLED_NUM];
 
 void matrix_init_kb(void) {
@@ -24,8 +22,8 @@ void matrix_init_kb(void) {
 	// runs once when the firmware starts up
 
 	setPinOutput(E6);
+    writePinLow(E6);
     matrix_init_user();
-    led_set_kb(USB_LED_CAPS_LOCK);
 }
 
 void matrix_scan_kb(void) {
@@ -45,25 +43,6 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
 void led_set_kb(uint8_t usb_led) {
 	// put your keyboard LED indicator (ex: Caps Lock LED) toggling code here
-  if (IS_LED_ON(usb_led, USB_LED_CAPS_LOCK)) {
-    writePinLow(E6);
-    sethsv(HSV_TEAL, (LED_TYPE *) &led[0]);
-    sethsv(HSV_TEAL, (LED_TYPE *) &led[1]);
-    sethsv(HSV_TEAL, (LED_TYPE *) &led[2]);
-    sethsv(HSV_TEAL, (LED_TYPE *) &led[3]);
-    sethsv(HSV_TEAL, (LED_TYPE *) &led[4]);
-    sethsv(HSV_TEAL, (LED_TYPE *) &led[5]);
-    rgblight_set();
-  } else {
-    writePinHigh(E6);
-    sethsv(HSV_ORANGE, (LED_TYPE *) &led[0]);
-    sethsv(HSV_ORANGE, (LED_TYPE *) &led[1]);
-    sethsv(HSV_ORANGE, (LED_TYPE *) &led[2]);
-    sethsv(HSV_ORANGE, (LED_TYPE *) &led[3]);
-    sethsv(HSV_ORANGE, (LED_TYPE *) &led[4]);
-    sethsv(HSV_ORANGE, (LED_TYPE *) &led[5]);
-    rgblight_set();
-  }
 
     led_set_user(usb_led);
 }

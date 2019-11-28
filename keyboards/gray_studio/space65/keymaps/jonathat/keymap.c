@@ -15,11 +15,17 @@
  */
 #include QMK_KEYBOARD_H
 
+rgblight_config_t RGB_current_config;
+
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
   QMKBEST = SAFE_RANGE,
   QMKURL
 };
+
+void copyrgb(LED_TYPE *src, LED_TYPE *dst);
+
+LED_TYPE led_save[RGBLED_NUM];
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [0] = LAYOUT( \
@@ -31,8 +37,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 [1] = LAYOUT( \
         KC_TRNS, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_TRNS, KC_TRNS, KC_MUTE, \
-        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PSCR, KC_SLCK, KC_PAUS, KC_TRNS, KC_TRNS,          \
-        KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU,                   \
+        KC_TRNS, RGB_HUI, RGB_SAI, RGB_VAI, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PSCR, KC_SLCK, KC_PAUS, KC_TRNS, KC_TRNS,          \
+        KC_TRNS, RGB_HUD, RGB_SAD, RGB_VAD, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_VOLU,                   \
         KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_PGUP, KC_VOLD,          \
         KC_TRNS, KC_TRNS, KC_TRNS,                   KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS, KC_HOME, KC_PGDN, KC_END                     \
     ),
@@ -60,18 +66,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-void init_led(LED_TYPE* led) {
+void LED_default_set(void) {
     sethsv(HSV_TEAL, (LED_TYPE *)&led[0]);
     sethsv(HSV_TEAL, (LED_TYPE *)&led[1]);
     sethsv(HSV_TEAL, (LED_TYPE *)&led[2]);
     sethsv(HSV_TEAL, (LED_TYPE *)&led[3]);
     sethsv(HSV_TEAL, (LED_TYPE *)&led[4]);
     sethsv(HSV_TEAL, (LED_TYPE *)&led[5]);
+
     rgblight_set();
 }
 
-void matrix_init_user() {
 
+void matrix_init_user(void) {
+    LED_default_set();
 }
 
 void matrix_scan_user(void) {
@@ -79,5 +87,25 @@ void matrix_scan_user(void) {
 }
 
 void led_set_user(uint8_t usb_led) {
-
+    if (IS_LED_ON(usb_led, USB_LED_CAPS_LOCK)) {
+        writePinLow(E6);
+        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[0]);
+        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[1]);
+        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[2]);
+        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[3]);
+        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[4]);
+        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[5]);
+        rgblight_mode(13);
+        rgblight_set();
+    } else {
+        writePinHigh(E6);
+        sethsv(HSV_TEAL, (LED_TYPE *)&led[0]);
+        sethsv(HSV_TEAL, (LED_TYPE *)&led[1]);
+        sethsv(HSV_TEAL, (LED_TYPE *)&led[2]);
+        sethsv(HSV_TEAL, (LED_TYPE *)&led[3]);
+        sethsv(HSV_TEAL, (LED_TYPE *)&led[4]);
+        sethsv(HSV_TEAL, (LED_TYPE *)&led[5]);
+        rgblight_mode(2);
+        rgblight_set();
+    }
 }
