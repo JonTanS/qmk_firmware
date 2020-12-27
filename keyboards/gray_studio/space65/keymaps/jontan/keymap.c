@@ -15,7 +15,9 @@
  */
 #include QMK_KEYBOARD_H
 
-rgblight_config_t RGB_current_config;
+#include "quantum/rgblight_list.h"
+
+extern rgblight_config_t rgblight_config;
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
@@ -53,40 +55,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-void LED_default_set(void) {
-    sethsv(HSV_TEAL, (LED_TYPE *)&led[0]);
-    sethsv(HSV_TEAL, (LED_TYPE *)&led[1]);
-    sethsv(HSV_TEAL, (LED_TYPE *)&led[2]);
-    sethsv(HSV_TEAL, (LED_TYPE *)&led[3]);
-    sethsv(HSV_TEAL, (LED_TYPE *)&led[4]);
-    sethsv(HSV_TEAL, (LED_TYPE *)&led[5]);
-
-    rgblight_set();
+void keyboard_post_init_user(void) {
+    rgblight_config.hue = 128;
+    rgblight_config.sat = 255;
+    rgblight_config.val = 255;
 }
 
-void matrix_init_user(void) { LED_default_set(); }
+void matrix_init_user(void) {}
 
 void matrix_scan_user(void) {}
 
 void led_set_user(uint8_t usb_led) {
     if (IS_LED_ON(usb_led, USB_LED_CAPS_LOCK)) {
-        writePinLow(E6);
-        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[0]);
-        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[1]);
-        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[2]);
-        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[3]);
-        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[4]);
-        // sethsv(HSV_ORANGE, (LED_TYPE *)&led[5]);
         rgblight_mode(13);
         rgblight_set();
     } else {
-        writePinHigh(E6);
-        sethsv(HSV_TEAL, (LED_TYPE *)&led[0]);
-        sethsv(HSV_TEAL, (LED_TYPE *)&led[1]);
-        sethsv(HSV_TEAL, (LED_TYPE *)&led[2]);
-        sethsv(HSV_TEAL, (LED_TYPE *)&led[3]);
-        sethsv(HSV_TEAL, (LED_TYPE *)&led[4]);
-        sethsv(HSV_TEAL, (LED_TYPE *)&led[5]);
+        // writePinHigh(E6);
+        // sethsv(HSV_TEAL, (LED_TYPE *)&led[0]);
+        // sethsv(HSV_TEAL, (LED_TYPE *)&led[1]);
+        // sethsv(HSV_TEAL, (LED_TYPE *)&led[2]);
+        // sethsv(HSV_TEAL, (LED_TYPE *)&led[3]);
+        // sethsv(HSV_TEAL, (LED_TYPE *)&led[4]);
+        // sethsv(HSV_TEAL, (LED_TYPE *)&led[5]);
+        rgblight_sethsv_range(HSV_TEAL, 0, 6);
         rgblight_mode(2);
         rgblight_set();
     }
